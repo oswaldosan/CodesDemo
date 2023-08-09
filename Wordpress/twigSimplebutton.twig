@@ -1,0 +1,17 @@
+{#
+  Title: Sleep Story Download BTN
+  Description: Sleep Story Downloader
+  Category: common
+  Icon: button
+  Keywords: button
+  Mode: edit
+  Align: wide
+  PostTypes: page post
+  SupportsAlign: false
+  SupportsMode: false
+  SupportsMultiple: true
+#}
+
+<button id="StoryPDFDownload" class="btn btn-custom-block size-medium style-morning copay-btn" onclick="storyPDF('{{fields.file_name}}', '{{fields.file_url}}', '{{fields.check_url}}')">
+ {{fields.btn_text}}
+</button>

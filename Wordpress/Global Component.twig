@@ -1,0 +1,236 @@
+{#
+  Title: Global Block
+  Description: This the global block container
+  Category: Main Component
+  Icon: dashicons dashicons-archive
+  Keywords: Global
+  Mode: edit
+  Align: wide
+  PostTypes: page post
+  SupportsAlign: false
+  SupportsMode: false
+  SupportsMultiple: true
+#}
+
+<div id="{{fields.id}}" class="data-{{ block.id }} {% if fields.full_width %}container-fluid {% else %}container {% endif %} {{fields.extra_classes}} {% if fields.background_image or fields.background_image_mobile %} data-{{ block.id }} wua-col-bg-image {% endif %}" style="{% if fields.background_color %} background-color: {{fields.background_color}}; {% endif %}">
+
+	<div class="container">
+		<div class="row">
+			{% for item in fields.inner_sections %}
+				<!--Column & Layour Options START -->
+    
+	{% if item.layout_options.tablet_padding %} {% set tabletpadding = item.layout_options.tablet_padding %} {% else %} {% set tabletpadding = item.layout_options.desktop_padding %}  {% endif %}
+	
+	
+	{%  if  item.layout_options.vertical_alignment_desktop == 'align-self-lg-start' %}
+        {%  set valignDesktop = 'flex-start' %}
+	{%  elseif  item.layout_options.vertical_alignment_desktop == 'align-self-lg-end' %}
+        {%  set valignDesktop = 'flex-end' %}
+	{%  elseif  item.layout_options.vertical_alignment_desktop == 'align-self-lg-center' %}
+        {%  set valignDesktop = 'center' %}
+	{%  endif %}	
+
+	{%  if  item.layout_options.vertical_alignment == 'align-self-start' %}
+        {%  set valignMobile = 'flex-start' %}
+	{%  elseif  item.layout_options.vertical_alignment == 'align-self-end' %}
+        {%  set valignMobile = 'flex-end' %}
+	{%  elseif  item.layout_options.vertical_alignment == 'align-self-center' %}
+        {%  set valignMobile = 'center' %}
+	{%  endif %}	
+                                         
+	{%
+     set customStyles = [
+     '--marginDesktopTop:'~item.layout_options.desktop_margin_top,
+     '--marginMobileTop:'~item.layout_options.mobile_margin_top,
+     '--marginDesktopBottom:'~item.layout_options.desktop_margin_bottom,
+     '--marginMobileBottom:'~item.layout_options.mobile_margin_bottom,
+     '--paddingDestkop:'~item.layout_options.desktop_padding,    
+     '--paddingMobile:'~item.layout_options.mobile_padding,
+	 '--paddingTablet:'~tabletpadding,
+     '--columnGap:'~item.layout_options.inner_content_gap~'px',
+	 '--verticalMobile:'~valignMobile,
+	 '--verticalDesktop:'~valignDesktop,
+     ]
+    %}
+
+				<{% if item.layout_options.col_link %}a href="{{item.layout_options.col_link}}"{% else %}div {% endif %}
+					class="{{item.layout_options.optional_classes}} colsbg-{{loop.index}} border-{{loop.index}} global-cols d-flex {{item.layout_options.flex_direction}} {{item.layout_options.align_items}} {{item.layout_options.align_items_desktop}}  col-{{item.layout_options.mobile_columns}} col-md-{{item.layout_options.desktop_columns}} {% if item.layout_options.desktop_order %}order-md-{{item.layout_options.desktop_order}} {% endif %}{% if item.layout_options.mobile_order %}order-{{item.layout_options.mobile_order}} {% endif %} {% if item.layout_options.offset_desktop != '' %}offset-md-{{item.layout_options.offset_desktop}} {% endif %} {% if item.layout_options.offset_mobile != '' %}offset-{{item.layout_options.offset_mobile}} {% endif %} {% if item.layout_options.columns_lg %}col-lg-{{item.layout_options.columns_lg}} {% endif %} {% if item.layout_options.offset_dsk %}offset-lg-{{item.layout_options.offset_dsk}} {% endif %}"
+                    style="{{ customStyles|join('; ') }}; {% if item.layout_options.column_background_color %} background-color: {{item.layout_options.column_background_color}}; {% endif %}"> 
+					<!--Content START -->
+					{% for content in item.blocks %}
+						{% for final in content %}
+							{% for finalItem in final %}
+
+
+								{% if finalItem.image_block %}
+									{%
+                                include 'components/image.twig' with {
+                                 url: finalItem.image_block,
+                                 altTag: finalItem.image_alt_text,
+                                 desktopWidth: finalItem.desktop_width,
+                                 mobileWidth: finalItem.mobile_width,
+                                 additionalClass: finalItem.custom_classes
+                              }
+                             %}
+								{% endif %}
+
+
+								{% if finalItem.lottie_file %}
+									{%
+                                include 'components/lottie.twig' with {
+                                 lottiefile: finalItem.lottie_file,
+                                 descriptionTag: finalItem.description_tag,
+                                 desktopWidth: finalItem.desktop_width,
+                                 mobileWidth: finalItem.mobile_width,
+                                 loop: finalItem.loop
+                              }
+                             %}
+								{% endif %}
+
+
+								{% if finalItem.text_content %}
+									<div {% if finalItem.custom_classes %} class="{{finalItem.custom_classes}}" {% endif %}>
+										{{finalItem.text_content}}
+									</div>
+								{% endif %}
+
+
+								{% if finalItem.html_content %}
+									<div {% if finalItem.custom_classes %} class="{{finalItem.custom_classes}}" {% endif %}>
+										{{finalItem.html_content|raw}}
+									</div>
+								{% endif %}
+
+
+								{% if finalItem.animation_selector %}
+									{% set template = 'components/animations/' ~ finalItem.animation_selector %}
+									{% include template %}
+								{% endif %}
+
+
+								{% if finalItem.initial_label %}
+									<!--dropdown component -->
+									{%
+                                      include 'components/dropdown.twig' with {
+									     maincolor: finalItem.component_color,
+										 activecolor: finalItem.component_color_active,
+										 hovercolor: finalItem.component_color_hover,
+								      }
+                                   %}
+								{% endif %}
+
+								{% if finalItem.button_label %}
+									<!--Button Component -->
+									{%
+                                include 'components/button.twig' with {
+									borderColor: finalItem.button_border_color,
+									bgcolor: finalItem.button_color_bg,
+									txtcolor: finalItem.button_color_text,
+									hoverColor: finalItem.btn_color_hover,
+									hoverTxtColor: finalItem.btn_color_hover_text,
+									hoverBorderColor: finalItem.btn_color_hover_border, 
+									label: finalItem.button_label,
+									url: finalItem.target_url,
+									target: finalItem.open_in_blank_page,
+									leavingSite: finalItem.leaving_site_btn,
+									label2: finalItem.button_label_second, 
+									override_padding: finalItem.override_padding,
+									override_radius: finalItem.override_radius,
+									override_lineh: finalItem.override_lineh,
+									font_weight: finalItem.font_weight,
+									custom_classes: finalItem.custom_classes
+								}
+                               %}
+								{% endif %}
+
+								{% if finalItem.carousel_items %}
+									<!--Carousel component -->
+									{%
+                                      include 'components/carousel.twig' with {
+										showsectionHeader: finalItem.show_header,
+										sectionheader: finalItem.section_header,
+										showprogressbar: finalItem.show_progress_bar,
+										carouselItems: finalItem.carousel_items,
+										typeItems: finalItem.type,
+										typeText: finalItem.text_content,
+										typeImage: finalItem.image_carousel,
+										slickPrevArrowImg: finalItem.prev_arrow,
+										slickNextArrowImg: finalItem.next_arrow
+
+								      }
+                                   %}
+								{% endif %}
+								
+
+							{% endfor %}
+						{% endfor  %}
+					{% endfor  %}
+
+				</{% if item.layout_options.col_link %}a {% else %}div {% endif %}>
+			{% endfor %}
+		</div>
+	</div>
+
+
+</div>
+
+
+<style>
+	.data-{{block.id}}{
+		{% if fields.background_image %}
+			background-image: url({{fields.background_image}});
+		{% endif %}
+		background-size: {{fields.bg_size}};
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+		
+	    @media only screen and (max-width: 768px)
+		{
+			.data-{{block.id}}{
+				{% if fields.background_image_mobile %}
+				background-image: url({{fields.background_image_mobile}});
+				{% else %}
+				background-image: none !important;
+				{% endif %}
+			}
+		}
+	
+    {% for item in fields.inner_sections %}
+     {% if item.layout_options.border_styles %}
+		.data-{{block.id}} .border-{{loop.index}}{
+			border-{{item.layout_options.border_desktop}}: {{item.layout_options.border_styles}};
+			{% if item.layout_options.border_styles_second %}
+			border-{{item.layout_options.border_desktop_second}}: {{item.layout_options.border_styles_second}};
+	        {% endif %}
+		}
+     @media only screen and (max-width: 768px) { 
+	    .data-{{block.id}} .border-{{loop.index}}{
+			border-{{item.layout_options.border_desktop}}: none;
+			border-{{item.layout_options.border_mobile}}: {{item.layout_options.border_styles_mobile}};
+			{% if item.layout_options.border_styles_second %}
+			border-{{item.layout_options.border_desktop_second}}: none;
+	  	    border-{{item.layout_options.border_mobile_second}}: {{item.layout_options.border_styles_mobile_second}};
+	       {% endif %}
+		   }
+		}
+       {% endif %}
+    
+	 {% if (item.layout_options.column_background_image_desktop) or (item.layout_options.column_background_image_mobile) %}
+     .data-{{block.id}} .colsbg-{{loop.index}}{
+			background-image: url({{item.layout_options.column_background_image_desktop}});
+			background-size: {{item.layout_options.column_background_size}};
+			background-position: {{item.layout_options.column_background_position_desktop}};
+		}
+     @media only screen and (max-width: 768px) { 
+      .data-{{block.id}} .colsbg-{{loop.index}}{
+			background-image: url({{item.layout_options.column_background_image_mobile}});
+			background-size: {{item.layout_options.column_background_size}};
+			background-position: {{item.layout_options.column_background_position_mobile}};
+	  	   }
+		}
+	 {% endif %}
+	{% endfor %}
+
+
+</style>
